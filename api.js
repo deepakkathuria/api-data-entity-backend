@@ -3,6 +3,8 @@ const http = require("http");
 const axios = require("axios");
 const mongoose = require("mongoose");
 const express = require('express');
+const cache = require("./routeCache/routeCache");
+
 
 const app = express();
 
@@ -661,5 +663,57 @@ app.get('/api/playerstats/:pid', async (req, res) => {
       res.json(stats);
   } catch (error) {
       res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ----------------------------------------------PROXY ------------------------------------------------------------------------------
+
+
+
+const token = "73d62591af4b3ccb51986ff5f8af5676";
+//comment
+
+// Define the API endpoint you want to proxy
+const apiEndpoint = `https://rest.entitysport.com/v2/matches?token=${token}`;
+
+// Apply the middleware to the specific route
+app.use("/matches", cache(60));
+
+// Set up a route to proxy requests
+app.get("/matches", async (req, res) => {
+  try {
+    // Extract query parameters from the client request
+    const queryParams = req.query;
+
+    // Make a request to the API endpoint with the extracted query parameters
+    const apiResponse = await axios.get(apiEndpoint, { params: queryParams });
+
+    // Send the API response to the client
+    res.json(apiResponse.data);
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
