@@ -17,7 +17,7 @@ const app = express();
 // Define a route to handle GET requests at the "/todos" path
 
 
-const PORT = process.env.PORT || 4003;
+const PORT = process.env.PORT || 3000;
 
 // --------------------------------------------------MATCH API SCHEMA--------------------------------------
 
