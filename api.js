@@ -4,6 +4,10 @@ const axios = require("axios");
 const mongoose = require("mongoose");
 const express = require('express');
 const cache = require("./routeCache/routeCache");
+const Team = require('./models/teams.model');
+const TeamM = require('./models/teamPlayer.model')
+const Playerstats = require('./models/playerStats.model')
+
 
 
 const app = express();
@@ -13,7 +17,7 @@ const app = express();
 // Define a route to handle GET requests at the "/todos" path
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4003;
 
 // --------------------------------------------------MATCH API SCHEMA--------------------------------------
 
@@ -151,66 +155,66 @@ app.listen(PORT, () => {
 
 
 
-const teamsSchema = new mongoose.Schema({
-  tid: {
-    type: Number,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  abbr: {
-    type: String,
-    required: true,
-  },
-  alt_name: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: true,
-  },
-  thumb_url: {
-    type: String,
-    required: true,
-  },
-  logo_url: {
-    type: String,
-    required: true,
-  },
-  country: {
-    type: String,
-    required: true,
-  },
-  sex: {
-    type: String,
-    required: true,
-  },
-  etag: {
-    type: String,
-    required: true,
-  },
-  modified: {
-    type: Date,
-    required: true,
-  },
-  datetime: {
-    type: Date,
-    required: true,
-  },
-  api_version: {
-    type: String,
-    required: true,
-  },
-});
+// const teamsSchema = new mongoose.Schema({
+//   tid: {
+//     type: Number,
+//     required: true,
+//   },
+//   title: {
+//     type: String,
+//     required: true,
+//   },
+//   abbr: {
+//     type: String,
+//     required: true,
+//   },
+//   alt_name: {
+//     type: String,
+//     required: true,
+//   },
+//   type: {
+//     type: String,
+//     required: true,
+//   },
+//   thumb_url: {
+//     type: String,
+//     required: true,
+//   },
+//   logo_url: {
+//     type: String,
+//     required: true,
+//   },
+//   country: {
+//     type: String,
+//     required: true,
+//   },
+//   sex: {
+//     type: String,
+//     required: true,
+//   },
+//   etag: {
+//     type: String,
+//     required: true,
+//   },
+//   modified: {
+//     type: Date,
+//     required: true,
+//   },
+//   datetime: {
+//     type: Date,
+//     required: true,
+//   },
+//   api_version: {
+//     type: String,
+//     required: true,
+//   },
+// });
 
-const Team = mongoose.model('Teamtt', teamsSchema);
+// const Team = mongoose.model('Teamtt', teamsSchema);
 
 
 
-// ---------------------------------TEAM API --------------------------------------------------------
+// ---------------------------------TEAM  list API and team/teamid details --------------------------------------------------------
 
 app.get('/teams', async (req, res) => {
   try {
@@ -241,94 +245,108 @@ console.log(query,"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqu")
 
 
 
+app.get('/teams/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const team = await Team.findOne({ tid: id });
+    if (!team) {
+      return res.status(404).send('Team not found');
+    }
+    res.json(team);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+
 
 // -----------------------------------------api for players------------------------------------------
-const playerSchema = new mongoose.Schema({
-  pid: { type: Number, required: true },
-  title: { type: String, required: true },
-  short_name: { type: String, required: true },
-  first_name: { type: String, required: true },
-  last_name: { type: String, default: '' },
-  middle_name: { type: String, default: '' },
-  birthdate: { type: Date, required: true },
-  birthplace: { type: String, default: '' },
-  country: { type: String, required: true },
-  primary_team: [{ tid: Number, name: String, short_name: String }],
-  logo_url: { type: String, default: '' },
-  playing_role: { type: String, default: '' },
-  batting_style: { type: String, default: '' },
-  bowling_style: { type: String, default: '' },
-  fielding_position: { type: String, default: '' },
-  recent_match: { type: Number, default: null },
-  recent_appearance: { type: Date, default: null },
-  fantasy_player_rating: { type: Number, default: null },
-  alt_name: { type: String, default: '' },
-  facebook_profile: { type: String, default: '' },
-  twitter_profile: { type: String, default: '' },
-  instagram_profile: { type: String, default: '' },
-  debut_data: { type: String, default: '' },
-  thumb_url: { type: String, default: '' },
-  nationality: { type: String, default: '' },
-});
+// const playerSchema = new mongoose.Schema({
+//   pid: { type: Number, required: true },
+//   title: { type: String, required: true },
+//   short_name: { type: String, required: true },
+//   first_name: { type: String, required: true },
+//   last_name: { type: String, default: '' },
+//   middle_name: { type: String, default: '' },
+//   birthdate: { type: Date, required: true },
+//   birthplace: { type: String, default: '' },
+//   country: { type: String, required: true },
+//   primary_team: [{ tid: Number, name: String, short_name: String }],
+//   logo_url: { type: String, default: '' },
+//   playing_role: { type: String, default: '' },
+//   batting_style: { type: String, default: '' },
+//   bowling_style: { type: String, default: '' },
+//   fielding_position: { type: String, default: '' },
+//   recent_match: { type: Number, default: null },
+//   recent_appearance: { type: Date, default: null },
+//   fantasy_player_rating: { type: Number, default: null },
+//   alt_name: { type: String, default: '' },
+//   facebook_profile: { type: String, default: '' },
+//   twitter_profile: { type: String, default: '' },
+//   instagram_profile: { type: String, default: '' },
+//   debut_data: { type: String, default: '' },
+//   thumb_url: { type: String, default: '' },
+//   nationality: { type: String, default: '' },
+// });
 
-const Player = mongoose.model('Player', playerSchema);
-
-
+// const Player = mongoose.model('Player', playerSchema);
 
 
 
 
 
 
-app.get('/api/players', async (req, res) => {
-  try {
-    const { country } = req.params;
-    const players = await Player.find({ nationality: 'India' }).exec();
-    res.json(players);
-    console.log(players,"pppppppppppppppppppppppppppp")
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+
+
+// app.get('/api/players', async (req, res) => {
+//   try {
+//     const { country } = req.params;
+//     const players = await Player.find({ nationality: 'India' }).exec();
+//     res.json(players);
+//     console.log(players,"pppppppppppppppppppppppppppp")
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 
 
-app.get('/players', async (req, res) => {
-  console.log(req.params,"rwqeqqqqqqqqqqqqqq")
-  try {
-    const { country } = req.params;
-    const players = await Player.find({ nationality: 'India' }).exec();
-    res.json(players);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+// app.get('/players', async (req, res) => {
+//   console.log(req.params,"rwqeqqqqqqqqqqqqqq")
+//   try {
+//     const { country } = req.params;
+//     const players = await Player.find({ nationality: 'India' }).exec();
+//     res.json(players);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 
 
-app.get('/players/:pid', async (req, res) => {
-  try {
-    const { pid } = req.params;
+// app.get('/players/:pid', async (req, res) => {
+//   try {
+//     const { pid } = req.params;
 
-    // Query the database to find a player with the specified pid
-    const player = await Player.findOne({ pid }).exec();
+//     // Query the database to find a player with the specified pid
+//     const player = await Player.findOne({ pid }).exec();
 
-    // Check if the player was found
-    if (player) {
-      // Respond with the retrieved player in JSON format
-      res.json(player);
-    } else {
-      // If player with the specified pid is not found, respond with an appropriate message
-      res.status(404).json({ message: 'Player not found' });
-    }
-  } catch (err) {
-    // Handle errors and log them to the console
-    console.error(err);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+//     // Check if the player was found
+//     if (player) {
+//       // Respond with the retrieved player in JSON format
+//       res.json(player);
+//     } else {
+//       // If player with the specified pid is not found, respond with an appropriate message
+//       res.status(404).json({ message: 'Player not found' });
+//     }
+//   } catch (err) {
+//     // Handle errors and log them to the console
+//     console.error(err);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
 
 
@@ -342,95 +360,77 @@ app.get('/players/:pid', async (req, res) => {
 
 
 
-const competitionS = new mongoose.Schema({
-  cid: {
-    type: Number,
-    allowNull: false,
-  },
-  title: {
-    type: String,
-    allowNull: false,
-  },
-  abbr: {
-    type: String,
-  },
-  type: {
-    type:String,
-  },
-  category: {
-    type: String,
-  },
-  game_format: {
-    type: String,
-  },
-  status: {
-    type: String,
-  },
-  season: {
-    type: String,
-  },
-  datestart: {
-    type: Date,
-  },
-  dateend: {
-    type: Date,
-  },
-  country: {
-    type: String,
-  },
-  total_matches: {
-    type: Number,
-  },
-  total_rounds: {
-    type: Number,
-  },
-  total_teams: {
-    type: Number,
-  },
-  table: {
-    type: Number,
-  },
-  man_of_the_series: {
-    type: Object,
-  },
-  rounds: {
-    type: Object, // Assuming 'rounds' is an array of objects containing round information
-  },
-  venue_list: {
-    type: Object, // Assuming 'venue_list' is an array of objects containing venue information
-  },
-});
+// const competitionS = new mongoose.Schema({
+//   cid: {
+//     type: Number,
+//     allowNull: false,
+//   },
+//   title: {
+//     type: String,
+//     allowNull: false,
+//   },
+//   abbr: {
+//     type: String,
+//   },
+//   type: {
+//     type:String,
+//   },
+//   category: {
+//     type: String,
+//   },
+//   game_format: {
+//     type: String,
+//   },
+//   status: {
+//     type: String,
+//   },
+//   season: {
+//     type: String,
+//   },
+//   datestart: {
+//     type: Date,
+//   },
+//   dateend: {
+//     type: Date,
+//   },
+//   country: {
+//     type: String,
+//   },
+//   total_matches: {
+//     type: Number,
+//   },
+//   total_rounds: {
+//     type: Number,
+//   },
+//   total_teams: {
+//     type: Number,
+//   },
+//   table: {
+//     type: Number,
+//   },
+//   man_of_the_series: {
+//     type: Object,
+//   },
+//   rounds: {
+//     type: Object, // Assuming 'rounds' is an array of objects containing round information
+//   },
+//   venue_list: {
+//     type: Object, // Assuming 'venue_list' is an array of objects containing venue information
+//   },
+// });
 
-const Competition = mongoose.model('Competitiont', competitionS);
-
-
+// const Competition = mongoose.model('Competitiont', competitionS);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.get('/competition',async(req,res)=>{
-  try{
-      const matches = await Competition.find({}).exec()
-      res.json(matches)
-  }catch(err){
-      console.error(err)
-  }
-})
+// app.get('/competition',async(req,res)=>{
+//   try{
+//       const matches = await Competition.find({}).exec()
+//       res.json(matches)
+//   }catch(err){
+//       console.error(err)
+//   }
+// })
 
 
 
@@ -466,53 +466,52 @@ app.get('/competition',async(req,res)=>{
 
 
 
-// ----------------------------------------fdjgjs-----------------------------------------------------------------
+// ----------------------------------------player according to team-----------------------------------------------------------------
 
 
 
 
-
-const teamSchemaM = new mongoose.Schema({
-  tid: { type: Number, required: true },
-  title: { type: String, required: true },
-  abbr: { type: String, required: true },
-  alt_name: { type: String, required: true },
-  type: { type: String, required: true },
-  thumb_url: { type: String, required: true },
-  logo_url: { type: String, required: true },
-  country: { type: String, required: true },
-  sex: { type: String, required: true },
+// const teamSchemaM = new mongoose.Schema({
+//   tid: { type: Number, required: true },
+//   title: { type: String, required: true },
+//   abbr: { type: String, required: true },
+//   alt_name: { type: String, required: true },
+//   type: { type: String, required: true },
+//   thumb_url: { type: String, required: true },
+//   logo_url: { type: String, required: true },
+//   country: { type: String, required: true },
+//   sex: { type: String, required: true },
   
-  players: [{
-    pid: { type: Number, required: true },
-    title: { type: String, required: true },
-    short_name: { type: String, required: true },
-    first_name: { type: String, required: true },
-    last_name: { type: String, default: '' },
-    middle_name: { type: String, default: '' },
-    birthdate: { type: Date, required: true },
-    birthplace: { type: String, default: '' },
-    country: { type: String, required: true },
-    primary_team: [{ tid: Number, name: String, short_name: String }],
-    logo_url: { type: String, default: '' },
-    playing_role: { type: String, default: '' },
-    batting_style: { type: String, default: '' },
-    bowling_style: { type: String, default: '' },
-    fielding_position: { type: String, default: '' },
-    recent_match: { type: Number, default: null },
-    recent_appearance: { type: Date, default: null },
-    fantasy_player_rating: { type: Number, default: null },
-    alt_name: { type: String, default: '' },
-    facebook_profile: { type: String, default: '' },
-    twitter_profile: { type: String, default: '' },
-    instagram_profile: { type: String, default: '' },
-    debut_data: { type: String, default: '' },
-    thumb_url: { type: String, default: '' },
-    nationality: { type: String, default: '' },
-  }]
-});
+//   players: [{
+//     pid: { type: Number, required: true },
+//     title: { type: String, required: true },
+//     short_name: { type: String, required: true },
+//     first_name: { type: String, required: true },
+//     last_name: { type: String, default: '' },
+//     middle_name: { type: String, default: '' },
+//     birthdate: { type: Date, required: true },
+//     birthplace: { type: String, default: '' },
+//     country: { type: String, required: true },
+//     primary_team: [{ tid: Number, name: String, short_name: String }],
+//     logo_url: { type: String, default: '' },
+//     playing_role: { type: String, default: '' },
+//     batting_style: { type: String, default: '' },
+//     bowling_style: { type: String, default: '' },
+//     fielding_position: { type: String, default: '' },
+//     recent_match: { type: Number, default: null },
+//     recent_appearance: { type: Date, default: null },
+//     fantasy_player_rating: { type: Number, default: null },
+//     alt_name: { type: String, default: '' },
+//     facebook_profile: { type: String, default: '' },
+//     twitter_profile: { type: String, default: '' },
+//     instagram_profile: { type: String, default: '' },
+//     debut_data: { type: String, default: '' },
+//     thumb_url: { type: String, default: '' },
+//     nationality: { type: String, default: '' },
+//   }]
+// });
 
-const TeamM = mongoose.model('TeamMP3', teamSchemaM);
+// const TeamM = mongoose.model('TeamMP3', teamSchemaM);
 
 
 
@@ -570,86 +569,86 @@ app.get('/v2/teams/:teamId/player', async (req, res) => {
 // ------------------------------------------------players stats data -----------------------------------------------------------
 
 
-const statsSchema = {
-  match_id: Number,
-  inning_id: Number,
-  matches: Number,
-  innings: Number,
-  notout: Number,
-  runs: Number,
-  balls: Number,
-  highest: Number,
-  run100: Number,
-  run50: Number,
-  run4: Number,
-  run6: Number,
-  average: String,
-  strike: String,
-  catches: Number,
-  stumpings: Number,
-  fastest50balls: Number,
-  fastest100balls: Number,
-  overs: String,
-  econ: String,
-  wickets: Number,
-  bestinning: String,
-  bestmatch: String,
-  wicket4i: Number,
-  wicket5i: Number,
-  wicket10m: Number,
-  hattrick: Number
-};
+// const statsSchema = {
+//   match_id: Number,
+//   inning_id: Number,
+//   matches: Number,
+//   innings: Number,
+//   notout: Number,
+//   runs: Number,
+//   balls: Number,
+//   highest: Number,
+//   run100: Number,
+//   run50: Number,
+//   run4: Number,
+//   run6: Number,
+//   average: String,
+//   strike: String,
+//   catches: Number,
+//   stumpings: Number,
+//   fastest50balls: Number,
+//   fastest100balls: Number,
+//   overs: String,
+//   econ: String,
+//   wickets: Number,
+//   bestinning: String,
+//   bestmatch: String,
+//   wicket4i: Number,
+//   wicket5i: Number,
+//   wicket10m: Number,
+//   hattrick: Number
+// };
 
-const playerStatsSchema = new mongoose.Schema({
-  pid: { type: Number, required: true },
-  title: { type: String, required: true },
-  short_name: { type: String, required: true },
-  first_name: { type: String, required: true },
-  last_name: { type: String, default: '' },
-  middle_name: { type: String, default: '' },
-  birthdate: { type: mongoose.Schema.Types.Mixed, required: true },
-  country: { type: String, required: true },
-  primary_team: [{ tid: Number, name: String, short_name: String }],
-  logo_url: { type: String, default: '' },
-  playing_role: { type: String, default: '' },
-  batting_style: { type: String, default: '' },
-  bowling_style: { type: String, default: '' },
-  fielding_position: { type: String, default: '' },
-  recent_match: { type: Number, default: null },
-  recent_appearance: { type: Date, default: null },
-  fantasy_player_rating: { type: Number, default: null },
-  alt_name: { type: String, default: '' },
-  facebook_profile: { type: String, default: '' },
-  twitter_profile: { type: String, default: '' },
-  instagram_profile: { type: String, default: '' },
-  debut_data: { type: String, default: '' },
-  thumb_url: { type: String, default: '' },
-  nationality: { type: String, default: '' },
-  batting: {
-    test: statsSchema,
-    odi: statsSchema,
-    t20i: statsSchema,
-    t20: statsSchema,
-    lista: statsSchema,
-    firstclass: statsSchema,
-    t10: statsSchema
-  },
-  bowling: {
-    test: statsSchema,
-    odi: statsSchema,
-    t20i: statsSchema,
-    t20: statsSchema,
-    lista: statsSchema,
-    firstclass: statsSchema,
-    t10: statsSchema
-  },
-  // etag: { type: String, default: '' },
-  // modified: { type: Date, default: null },
-  // datetime: { type: Date, default: null },
-  // api_version: { type: String, default: '' }
-});
+// const playerStatsSchema = new mongoose.Schema({
+//   pid: { type: Number, required: true },
+//   title: { type: String, required: true },
+//   short_name: { type: String, required: true },
+//   first_name: { type: String, required: true },
+//   last_name: { type: String, default: '' },
+//   middle_name: { type: String, default: '' },
+//   birthdate: { type: mongoose.Schema.Types.Mixed, required: true },
+//   country: { type: String, required: true },
+//   primary_team: [{ tid: Number, name: String, short_name: String }],
+//   logo_url: { type: String, default: '' },
+//   playing_role: { type: String, default: '' },
+//   batting_style: { type: String, default: '' },
+//   bowling_style: { type: String, default: '' },
+//   fielding_position: { type: String, default: '' },
+//   recent_match: { type: Number, default: null },
+//   recent_appearance: { type: Date, default: null },
+//   fantasy_player_rating: { type: Number, default: null },
+//   alt_name: { type: String, default: '' },
+//   facebook_profile: { type: String, default: '' },
+//   twitter_profile: { type: String, default: '' },
+//   instagram_profile: { type: String, default: '' },
+//   debut_data: { type: String, default: '' },
+//   thumb_url: { type: String, default: '' },
+//   nationality: { type: String, default: '' },
+//   batting: {
+//     test: statsSchema,
+//     odi: statsSchema,
+//     t20i: statsSchema,
+//     t20: statsSchema,
+//     lista: statsSchema,
+//     firstclass: statsSchema,
+//     t10: statsSchema
+//   },
+//   bowling: {
+//     test: statsSchema,
+//     odi: statsSchema,
+//     t20i: statsSchema,
+//     t20: statsSchema,
+//     lista: statsSchema,
+//     firstclass: statsSchema,
+//     t10: statsSchema
+//   },
+//   // etag: { type: String, default: '' },
+//   // modified: { type: Date, default: null },
+//   // datetime: { type: Date, default: null },
+//   // api_version: { type: String, default: '' }
+// });
 
-const Playerstats = mongoose.model('PlayerStats', playerStatsSchema);
+// const Playerstats = mongoose.model('PlayerStats', playerStatsSchema);
 
 app.get('/api/playerstats/:pid', async (req, res) => {
   try {
