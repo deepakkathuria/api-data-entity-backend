@@ -261,35 +261,35 @@ app.get('/teams/:id', async (req, res) => {
 
 
 // -----------------------------------------api for players------------------------------------------
-// const playerSchema = new mongoose.Schema({
-//   pid: { type: Number, required: true },
-//   title: { type: String, required: true },
-//   short_name: { type: String, required: true },
-//   first_name: { type: String, required: true },
-//   last_name: { type: String, default: '' },
-//   middle_name: { type: String, default: '' },
-//   birthdate: { type: Date, required: true },
-//   birthplace: { type: String, default: '' },
-//   country: { type: String, required: true },
-//   primary_team: [{ tid: Number, name: String, short_name: String }],
-//   logo_url: { type: String, default: '' },
-//   playing_role: { type: String, default: '' },
-//   batting_style: { type: String, default: '' },
-//   bowling_style: { type: String, default: '' },
-//   fielding_position: { type: String, default: '' },
-//   recent_match: { type: Number, default: null },
-//   recent_appearance: { type: Date, default: null },
-//   fantasy_player_rating: { type: Number, default: null },
-//   alt_name: { type: String, default: '' },
-//   facebook_profile: { type: String, default: '' },
-//   twitter_profile: { type: String, default: '' },
-//   instagram_profile: { type: String, default: '' },
-//   debut_data: { type: String, default: '' },
-//   thumb_url: { type: String, default: '' },
-//   nationality: { type: String, default: '' },
-// });
+const playerSchema = new mongoose.Schema({
+  pid: { type: Number, required: true },
+  title: { type: String, required: true },
+  short_name: { type: String, required: true },
+  first_name: { type: String, required: true },
+  last_name: { type: String, default: '' },
+  middle_name: { type: String, default: '' },
+  birthdate: { type: Date, required: true },
+  birthplace: { type: String, default: '' },
+  country: { type: String, required: true },
+  primary_team: [{ tid: Number, name: String, short_name: String }],
+  logo_url: { type: String, default: '' },
+  playing_role: { type: String, default: '' },
+  batting_style: { type: String, default: '' },
+  bowling_style: { type: String, default: '' },
+  fielding_position: { type: String, default: '' },
+  recent_match: { type: Number, default: null },
+  recent_appearance: { type: Date, default: null },
+  fantasy_player_rating: { type: Number, default: null },
+  alt_name: { type: String, default: '' },
+  facebook_profile: { type: String, default: '' },
+  twitter_profile: { type: String, default: '' },
+  instagram_profile: { type: String, default: '' },
+  debut_data: { type: String, default: '' },
+  thumb_url: { type: String, default: '' },
+  nationality: { type: String, default: '' },
+});
 
-// const Player = mongoose.model('Player', playerSchema);
+const Player = mongoose.model('Player', playerSchema);
 
 
 
@@ -326,27 +326,27 @@ app.get('/teams/:id', async (req, res) => {
 
 
 
-// app.get('/players/:pid', async (req, res) => {
-//   try {
-//     const { pid } = req.params;
+app.get('/players/:pid', async (req, res) => {
+  try {
+    const { pid } = req.params;
+     console.log(pid)
+    // Query the database to find a player with the specified pid
+    const player = await Player.findOne({ pid }).exec();
 
-//     // Query the database to find a player with the specified pid
-//     const player = await Player.findOne({ pid }).exec();
-
-//     // Check if the player was found
-//     if (player) {
-//       // Respond with the retrieved player in JSON format
-//       res.json(player);
-//     } else {
-//       // If player with the specified pid is not found, respond with an appropriate message
-//       res.status(404).json({ message: 'Player not found' });
-//     }
-//   } catch (err) {
-//     // Handle errors and log them to the console
-//     console.error(err);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// });
+    // Check if the player was found
+    if (player) {
+      // Respond with the retrieved player in JSON format
+      res.json(player);
+    } else {
+      // If player with the specified pid is not found, respond with an appropriate message
+      res.status(404).json({ message: 'Player not found' });
+    }
+  } catch (err) {
+    // Handle errors and log them to the console
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 
 
