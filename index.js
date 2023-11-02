@@ -15216,4 +15216,4 @@ async function fetchAndSaveAllPlayersAndStats(teamIds) {
   }
 }
 
-// fetchAndSaveAllPlayersAndStats(teamId)
+fetchAndSaveAllPlayersAndStats(teamId)
