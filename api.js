@@ -16,7 +16,7 @@ const app = express();
 app.use(cors());
 
 
-const PORT = process.env.PORT || 4003;
+const PORT = process.env.PORT || 3000;
 
 // Connect to your MongoDB database
 // mongoose.connect(
