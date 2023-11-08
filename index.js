@@ -15027,7 +15027,7 @@ const statsSchema = {
 const playerStatsSchema = new mongoose.Schema({
   pid: { type: Number, required: true },
   title: { type: String, required: true },
-  short_name: { type: String, required: true },
+  short_name: { type: String },
   first_name: { type: String, required: true },
   last_name: { type: String, default: '' },
   middle_name: { type: String, default: '' },
@@ -15078,56 +15078,6 @@ const Playerstats = mongoose.model('PlayerStats', playerStatsSchema);
 
 
 
-const teamIdp = [
-  {
-    name: "india",
-    id: 25,
-  },
-  {
-    name: "australia",
-    id: 5,
-  },
-  {
-    name: "pakistan",
-    id: 13,
-  },
-  {
-    name: "southafrica",
-    id: 19,
-  },
-  {
-    name: "westindies",
-    id: 17,
-  },
-  {
-    name: "newzealand",
-    id: 7,
-  },
-  {
-    name: "srilanka",
-    id: 21,
-  },
-  {
-    name: "ireland",
-    id: 11,
-  },
-  {
-    name: "uae",
-    id: 15,
-  },
-  {
-    name: "bangladesh",
-    id: 23,
-  },
-  {
-    name: "scotland",
-    id: 9,
-  },
-  {
-    name: "england",
-    id: 490,
-  },
-];
 
 
 const PLAYER_ENDPOINT = 'https://rest.entitysport.com/v2/teams/{}/player';
@@ -15216,4 +15166,138 @@ async function fetchAndSaveAllPlayersAndStats(teamIds) {
   }
 }
 
-fetchAndSaveAllPlayersAndStats(teamId)
+// fetchAndSaveAllPlayersAndStats(teamId)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const fetchPlayers = async () => {
+    let currentPage = 1;
+    let allPlayers = [];
+  
+    const response = await axios.get(`https://rest.entitysport.com/v2/players/?per_page=80&token=${TOKEN}`);
+  
+    const totalPages = response.data.response.total_pages;
+  
+    while (currentPage <= totalPages) {
+      const pageResponse = await axios.get(
+        `https://rest.entitysport.com/v2/players/?per_page=80&paged=${currentPage}&token=${TOKEN}`
+      );
+  
+      allPlayers = allPlayers.concat(pageResponse.data.response.items);
+      currentPage++;
+    }
+  
+    return allPlayers;
+  };
+
+  async function fetchAndSavePlayerStats() {
+    const players = await fetchPlayers();
+  
+    for (const player of players) {
+      console.log(`Fetching stats for player ${player.title}...`);
+      const statsData = await fetchStatsForPlayer(player.pid);
+  
+      if (statsData) {
+        const playerStats = new Playerstats({
+            pid: player.pid,
+            title: player.title,
+            short_name: player.short_name,
+            first_name: player.first_name,
+            last_name: player.last_name,
+            middle_name: player.middle_name,
+            birthdate: new Date(player.birthdate),
+            birthplace: player.birthplace,
+            country: player.country,
+            primary_team: player.primary_team,
+            logo_url: player.logo_url,
+            playing_role: player.playing_role,
+            batting_style: player.batting_style,
+            bowling_style: player.bowling_style,
+            fielding_position: player.fielding_position,
+            recent_match: player.recent_match,
+            recent_appearance: new Date(player.recent_appearance),
+            fantasy_player_rating: player.fantasy_player_rating,
+            alt_name: player.alt_name,
+            facebook_profile: player.facebook_profile,
+            twitter_profile: player.twitter_profile,
+            instagram_profile: player.instagram_profile,
+            debut_data: player.debut_data,
+            thumb_url: player.thumb_url,
+            nationality: player.nationality,
+            batting: statsData.batting,
+            bowling: statsData.bowling,
+            // etag: statsData.etag,
+            // modified: new Date(statsData.modified),
+            // datetime: new Date(statsData.datetime),
+            // api_version: statsData.api_version
+          });
+  
+        await playerStats.save();
+        console.log(`Stats for player ${player.title} saved.`);
+      } else {
+        console.log(`No stats found for player ${player.title}.`);
+      }
+    }
+  }
+  
+  
+  async function main() {
+    try {
+      console.log('Starting to fetch and save player stats...');
+      await fetchAndSavePlayerStats();
+      console.log('Completed fetching and saving player stats.');
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  }
+  
+  main();
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+

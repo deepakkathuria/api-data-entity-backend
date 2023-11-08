@@ -35,7 +35,7 @@ const statsSchema = {
 const playerStatsSchema = new mongoose.Schema({
   pid: { type: Number, required: true },
   title: { type: String, required: true },
-  short_name: { type: String, required: true },
+  short_name: { type: String},
   first_name: { type: String, required: true },
   last_name: { type: String, default: '' },
   middle_name: { type: String, default: '' },

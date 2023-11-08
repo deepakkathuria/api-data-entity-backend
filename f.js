@@ -1,27 +1,70 @@
 const express = require('express');
-const axios = require('axios');
+const mysql = require('mysql2/promise');
+const bodyParser = require('body-parser');
+
+// Configuration for your database
+const dbConfig = {
+  host: 'your_database_host',
+  user: 'your_database_user',
+  password: 'your_database_password',
+  database: 'your_wordpress_database_name'
+};
+
+// Set up the Express server
 const app = express();
-const port = 3005;
+const port = 3000; // You can choose any port
 
-app.get('/fetch-teams', async (req, res) => {
+// Body parser to parse JSON bodies
+app.use(bodyParser.json());
+
+// Function to update the post content with a hyperlink for the given word
+async function updatePostContent(word, url) {
+  // Establish connection to the database
+  const connection = await mysql.createConnection(dbConfig);
+
   try {
-    const response = await axios.get('http://localhost:4003/teams');
+    // Use `connection.escape()` to prevent SQL injection
+    const escapedWord = connection.escape(`%${word}%`);
+    // Fetch posts that contain the word
+    const [posts] = await connection.execute(`SELECT ID, post_content FROM wp_posts WHERE post_content LIKE ${escapedWord}`);
 
-    const teams = response.data;
-    const formattedTeams = teams.map(team => ({
-      name: team.title ? team.title.toLowerCase().replace(/\s/g, '') : 'unknown',
-      id: team.tid
-    }));
+    for (let post of posts) {
+      // Replace the first occurrence of the word with an <a> tag with href
+      // We use a regex with word boundaries to match the exact word
+      const regex = new RegExp(`\\b${word}\\b`, 'i');
+      if (regex.test(post.post_content)) {
+        const updatedContent = post.post_content.replace(regex, `<a href="${url}">${word}</a>`);
 
-    res.json(formattedTeams);
+        // Update the post content in the database
+        await connection.execute('UPDATE wp_posts SET post_content = ? WHERE ID = ?', [updatedContent, post.ID]);
+      }
+    }
+
+    console.log(`${posts.length} posts were checked and the relevant ones were updated.`);
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).send('Error fetching teams');
+    console.error('An error occurred:', error.message);
+  } finally {
+    // Always close the database connection when done
+    await connection.end();
   }
+}
+
+// Route to trigger the update process
+app.post('/update-content', async (req, res) => {
+  const { word, url } = req.body;
+
+  if (!word || !url) {
+    return res.status(400).send({ message: 'Please provide both a word and a URL to update.' });
+  }
+
+  await updatePostContent(word, url);
+
+  res.send({ message: 'Update process completed.' });
 });
 
+// Start the Express server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
 
 

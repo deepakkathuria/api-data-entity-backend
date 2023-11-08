@@ -8,9 +8,13 @@ const playerController = require('./controllers/playerController')
 const teamPlayerController = require('./controllers/teamPlayerController')
 const playerStatsController = require('./controllers/playerStatsController')
 require('dotenv').config();
+const cors = require('cors');
+
 
 
 const app = express();
+app.use(cors());
+
 
 const PORT = process.env.PORT || 4003;
 
