@@ -41,19 +41,23 @@ const teamsSchema = new mongoose.Schema({
   },
   etag: {
     type: String,
-    required: true,
+    // required: true,
   },
   modified: {
     type: Date,
-    required: true,
+    // required: true,
   },
   datetime: {
     type: Date,
-    required: true,
+    // required: true,
+  },
+  team_content:{
+    type: String,
+    required: false,
   },
   api_version: {
     type: String,
-    required: true,
+    // required: true,
   },
 });
 

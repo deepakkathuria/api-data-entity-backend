@@ -360,7 +360,7 @@ const fetchTeamsAndSave = async () => {
 };
 
 
-// fetchTeamsAndSave()
+fetchTeamsAndSave()
 
 
 

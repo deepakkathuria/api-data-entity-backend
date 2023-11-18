@@ -26,6 +26,8 @@ const playerSchema = new mongoose.Schema({
     debut_data: { type: String, default: '' },
     thumb_url: { type: String, default: '' },
     nationality: { type: String, default: '' },
+    player_content:{ type: String,required: true},
+    
 });
 
 const Player = mongoose.model('Player', playerSchema);

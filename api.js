@@ -38,15 +38,23 @@ app.listen(PORT, () => {
 app.use('/js', express.static('/var/www/myjsfiles'));
 
 
+app.use(express.json()); // This needs to be before your route handlers.
 
 // ---------------------------------TEAM  list API and team/teamid details --------------------------------------------------------
 
 app.get('/teams', teamController.getTeams);
 app.get('/teams/:id', teamController.getTeamById);
+app.put('/teams/:id/content', teamController.addOrUpdateTeamContent);
+
+
 
 //-----------------------------------------api for players------------------------------------------------
 
 app.get('/players/:pid', playerController.getPlayerById);
+app.get('/players', playerController.getPlayer);
+app.put('/players/:id/content', playerController.addOrUpdatePlayerContent);
+
+
 
 
 // ----------------------------------------player according to team-----------------------------------------------------------------
