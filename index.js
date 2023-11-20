@@ -15105,7 +15105,6 @@ async function fetchPlayersForTeam(teamId) {
         players.push(...response.data.response.items.players[category]);
       }
     });
-    console.log(players, "players")
     return players;
   } catch (error) {
     console.error(`Error fetching players for team ${teamId}:`, error);

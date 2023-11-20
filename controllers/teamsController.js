@@ -1,11 +1,33 @@
 const Team = require('../models/teams.model');
 
+// exports.getTeams = async (req, res) => {
+//   try {
+//     const { type, sex } = req.query;
+//     const query = {};
+//     if (type) query.type = type;
+//     if (sex) query.sex = sex;
+
+//     const teams = await Team.find(query);
+//     res.json(teams);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
+
 exports.getTeams = async (req, res) => {
   try {
-    const { type, sex } = req.query;
+    const { type, sex, searchText } = req.query;
     const query = {};
     if (type) query.type = type;
     if (sex) query.sex = sex;
+    
+    // Add search functionality
+    if (searchText) {
+      // Assuming you want to search in the 'alt_name' field
+      // This will allow a case-insensitive partial match
+      query.alt_name = { $regex: searchText, $options: 'i' };
+    }
 
     const teams = await Team.find(query);
     res.json(teams);
@@ -14,6 +36,7 @@ exports.getTeams = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 exports.getTeamById = async (req, res) => {
   try {

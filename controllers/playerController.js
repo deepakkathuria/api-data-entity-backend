@@ -17,16 +17,37 @@ exports.getPlayerById = async (req, res) => {
 };
 
 
+// exports.getPlayer = async (req, res) => {
+//   try {
+//     const players = await Player.find();
+//     console.log(players, "players");
+//     res.json(players);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// };
 exports.getPlayer = async (req, res) => {
   try {
-    const players = await Player.find();
-    console.log(players, "players");
+    const { searchText } = req.query;
+    console.log(searchText,"serachtext")
+    const query = {};
+
+    // Add search functionality
+    if (searchText) {
+      // Assuming you want to search in a field like 'name'
+      // This will allow a case-insensitive partial match
+      query.title = { $regex: searchText, $options: 'i' };
+    }
+
+    const players = await Player.find(query);
     res.json(players);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 
 
