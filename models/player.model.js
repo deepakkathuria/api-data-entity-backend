@@ -1,5 +1,10 @@
 const mongoose = require('mongoose')
 
+const teamSchema = new mongoose.Schema({
+    tid: { type: Number, required: true }, // Team ID
+    alt_name: { type: String, required: true } // Alternate name of the team
+});
+
 const playerSchema = new mongoose.Schema({
     pid: { type: Number, required: true },
     title: { type: String, required: true },
@@ -27,6 +32,8 @@ const playerSchema = new mongoose.Schema({
     thumb_url: { type: String, default: '' },
     nationality: { type: String, default: '' },
     player_content:{ type: String,required: true},
+    teams: [teamSchema],// Array of team IDs
+
     
 });
 

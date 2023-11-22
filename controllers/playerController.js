@@ -53,26 +53,64 @@ exports.getPlayer = async (req, res) => {
 
 
 
+// exports.addOrUpdatePlayerContent = async (req, res) => {
+//   const { id } = req.params; // or req.body, depending on how you send the ID
+//   const { team_content,teams } = req.body;
+//   console.log(req.body,"requestbody")
+
+//   try {
+//     const player = await Player.findOne({ pid: id });
+
+//     if (!player) {
+//       return res.status(404).send('Team not found');
+//     }
+
+//     // If the team doesn't have any content yet, add it.
+//     // If it already has content, update it.
+//     player.player_content = team_content || player.player_content;
+//     player.teams = teams || player.teams;
+
+
+//     await player.save(); // Save the updated team
+
+//     res.status(200).json({
+//       message: 'Team content added or updated successfully',
+//       player,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
+
+
+
+
 exports.addOrUpdatePlayerContent = async (req, res) => {
   const { id } = req.params; // or req.body, depending on how you send the ID
-  const { team_content } = req.body;
-  console.log(req.body,"requestbody")
+  const { team_content, teams } = req.body;
 
   try {
     const player = await Player.findOne({ pid: id });
 
     if (!player) {
-      return res.status(404).send('Team not found');
+      return res.status(404).send('Player not found');
     }
 
-    // If the team doesn't have any content yet, add it.
-    // If it already has content, update it.
+    // Update player content
     player.player_content = team_content || player.player_content;
 
-    await player.save(); // Save the updated team
+    // Update teams
+    // Assuming you want to replace the entire teams array
+    player.teams = teams.map(team => ({
+      tid: team.tid,
+      alt_name: team.alt_name
+    })) || player.teams;
+
+    await player.save(); // Save the updated player
 
     res.status(200).json({
-      message: 'Team content added or updated successfully',
+      message: 'Player content added or updated successfully',
       player,
     });
   } catch (error) {

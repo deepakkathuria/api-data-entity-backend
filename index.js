@@ -3,6 +3,7 @@ const http = require("http");
 const axios = require("axios");
 const mongoose = require("mongoose");
 const express = require('express');
+const fs = require('fs');
 
 const app = express();
 
@@ -360,7 +361,7 @@ const fetchTeamsAndSave = async () => {
 };
 
 
-fetchTeamsAndSave()
+// fetchTeamsAndSave()
 
 
 
@@ -15279,13 +15280,96 @@ const fetchPlayers = async () => {
     }
   }
   
-  main();
+//   main();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//fetch player for which the are player for teams
+
+// const getAllPlayersAndTheirTeams = async () => {
+//     try {
+//         const teams = await TeamM.find({});
+//         let playersData = [];
+
+//         teams.forEach(team => {
+//             // Iterate over each player category (e.g., t20i, test, odi)
+//             Object.keys(team.players).forEach(category => {
+//                 team.players[category].forEach(player => {
+//                     playersData.push({
+//                         playerId: player.pid, // Replace with actual field name if different
+//                         playerName: player.first_name + ' ' + player.last_name,
+//                         teamsPlayedFor: team.title, // Assuming the team title is the team they played for
+//                         // Add other player details as needed
+//                     });
+//                 });
+//             });
+//         });
+
+//         return playersData;
+//     } catch (error) {
+//         console.error("An error occurred:", error);
+//         return [];
+//     }
+// };
+
+// // Example usage
+// getAllPlayersAndTheirTeams().then(playersData => {
+//     console.log("Players and Their Teams:", playersData);
+// });
   
-  
-  
-  
-  
-  
+
+// Function to get all teams a player has played for
+// Function to get all teams a player has played for
+// const getPlayerTeams = async (playerId) => {
+//     try {
+//         const teams = await TeamM.find({});
+//         let playerTeams = [];
+
+//         teams.forEach(team => {
+//             // Iterate over each player category (e.g., t20i, test, odi)
+//             Object.keys(team.players).forEach(category => {
+//                 team.players[category].forEach(player => {
+//                     if (player.pid === playerId) {
+//                         playerTeams.push(team.title); // Assuming team title is the name of the team
+//                     }
+//                 });
+//             });
+//         });
+
+//         return playerTeams;
+//     } catch (error) {
+//         console.error("An error occurred:", error);
+//         return [];
+//     }
+// };
+
+// // Example usage
+// const playerId = 81; // Replace with the actual player ID (e.g., Washington Sundar's ID)
+// getPlayerTeams(playerId).then(teams => {
+//     console.log("Teams Played For:", teams);
+// });
 
 
 
@@ -15293,10 +15377,22 @@ const fetchPlayers = async () => {
 
 
 
+// const getAllTeamNamesAndWriteToCSV = async () => {
+//     try {
+//         const teams = await Team.find({}, { title: 1, _id: 0 });
+//         const teamNames = teams.map(team => team.title);
 
+//         // Convert array to CSV string
+//         const csvString = teamNames.join('\n');
 
+//         // Write to a CSV file
+//         fs.writeFileSync('teamNames.csv', csvString);
 
+//         console.log('Team names have been written to teamNames.csv');
+//     } catch (error) {
+//         console.error("An error occurred:", error);
+//     }
+// };
 
-
-
-
+// // Example usage
+// getAllTeamNamesAndWriteToCSV();
