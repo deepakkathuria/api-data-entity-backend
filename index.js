@@ -194,7 +194,7 @@ const fetchDataAndSave = async () => {
   
 // setInterval(fetchDataAndSave, 10000);
 
-// fetchDataAndSave();
+fetchDataAndSave();
 
 
 // -----------------------------api to save match list ---------------------------------------------------

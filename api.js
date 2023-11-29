@@ -103,7 +103,7 @@ app.get("/matches", async (req, res) => {
 
 // -----------------------------------livescore api according to date --------------------------------
 
-app.get('/matches', liveController.getMatches);
+app.get('/match', liveController.getMatches);
 
 
 
