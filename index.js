@@ -4,6 +4,8 @@ const axios = require("axios");
 const mongoose = require("mongoose");
 const express = require('express');
 const fs = require('fs');
+const Live = require('./models/live.model'); // Update the path according to your project structure
+
 
 const app = express();
 
@@ -15,99 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 
-// ---------------------------------------------------------SCHEMA FOR JSON /matches-----------------------------
-// Define the Mongoose schemas for nested objects
-const venueSchema = new mongoose.Schema({
-  venue_id: String,
-  name: String,
-  location: String,
-  country: String,
-  timezone: String,
-});
 
-const competitionSchema = new mongoose.Schema({
-  cid: Number,
-  title: String,
-  abbr: String,
-  type: String,
-  category: String,
-  match_format: String,
-  season: String,
-  status: String,
-  datestart: String,
-  dateend: String,
-  country: String,
-  total_matches: String,
-  total_rounds: String,
-  total_teams: String,
-});
-
-const teamSchema = new mongoose.Schema({
-  team_id: Number,
-  name: String,
-  short_name: String,
-  logo_url: String,
-  scores_full: String,
-  scores: String,
-  overs: String,
-});
-
-const matchSchema = new mongoose.Schema({
-  match_id: Number,
-  title: String,
-  short_title: String,
-  subtitle: String,
-  match_number: String,
-  format: Number,
-  format_str: String,
-  status: Number,
-  status_str: String,
-  status_note: String,
-  verified: String,
-  pre_squad: String,
-  odds_available: String,
-  game_state: Number,
-  game_state_str: String,
-  domestic: String,
-  competition: competitionSchema,
-  teama: teamSchema,
-  teamb: teamSchema,
-  date_start: String,
-  date_end: String,
-  timestamp_start: Number,
-  timestamp_end: Number,
-  date_start_ist: String,
-  date_end_ist: String,
-  venue: venueSchema,
-  umpires: String,
-  referee: String,
-  equation: String,
-  live: String,
-  result: String,
-  result_type: Number,
-  win_margin: String,
-  winning_team_id: Number,
-  commentary: Number,
-  wagon: Number,
-  latest_inning_number: Number,
-  presquad_time: String,
-  verify_time: String,
-  match_dls_affected: String,
-  weather: [],
-  pitch: {
-    pitch_condition: String,
-    batting_condition: String,
-    pace_bowling_condition: String,
-    spine_bowling_condition: String,
-  },
-  toss: {
-    text: String,
-    winner: Number,
-    decision: Number,
-  },
-});
-
-// ---------------------------------------------------------SCHEMA FOR JSON /matches-----------------------------
 
 
 
@@ -138,43 +48,43 @@ mongoose.connect(
 
 
 
-const Todo = mongoose.model("livescoredk", matchSchema);
+// const Todo = mongoose.model("livescoredk", matchSchema);
 
 
 
 
-const currentDate = new Date();
+// const currentDate = new Date();
 
-// Extract date components
-const year = currentDate.getFullYear();
-const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so we add 1 and pad with leading zero if needed
-const day = String(currentDate.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
+// // Extract date components
+// const year = currentDate.getFullYear();
+// const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so we add 1 and pad with leading zero if needed
+// const day = String(currentDate.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
 
-// Format the date
-var formattedDate = `${year}-${month}-${day}`;
-
-
+// // Format the date
+// var formattedDate = `${year}-${month}-${day}`;
 
 
 
 
 
-// Get the current date
-const currentDatet = new Date();
 
-// Get the date after two days
-const twoDaysLater = new Date();
-twoDaysLater.setDate(currentDatet.getDate() - 1);
 
-// Extract date components
-const tyear = twoDaysLater.getFullYear();
-const tmonth = String(twoDaysLater.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so we add 1 and pad with leading zero if needed
-const tday = String(twoDaysLater.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
+// // Get the current date
+// const currentDatet = new Date();
 
-// Format the date
-var tformattedDate = `${tyear}-${tmonth}-${tday}`;
-console.log(tformattedDate, "tformatrdate")
-console.log(formattedDate, "formateeddate")
+// // Get the date after two days
+// const twoDaysLater = new Date();
+// twoDaysLater.setDate(currentDatet.getDate() - 1);
+
+// // Extract date components
+// const tyear = twoDaysLater.getFullYear();
+// const tmonth = String(twoDaysLater.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so we add 1 and pad with leading zero if needed
+// const tday = String(twoDaysLater.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
+
+// // Format the date
+// var tformattedDate = `${tyear}-${tmonth}-${tday}`;
+// console.log(tformattedDate, "tformatrdate")
+// console.log(formattedDate, "formateeddate")
 
 
 
@@ -194,47 +104,97 @@ console.log(formattedDate, "formateeddate")
 
 // -------------------------------------------------------api to save match list -------------------------
 
+// const fetchDataAndSave = async () => {
+//   try {
+//     let currentPage = 1;
+//     let hasMoreData = true;
+
+//     while (hasMoreData) {
+//       // Fetch data from the external API for the specified date and page
+//       console.log(`Fetching data from the external API for date ${tformattedDate} and page ${currentPage}...`);
+//       const response = await axios.get(
+//         `https://rest.entitysport.com/v2/matches?date=2023-11-24_2023-12-27&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+//       );
+//       const todos = response.data.response.items;
+
+//       if (todos.length === 0) {
+//         // If no more data is returned, exit the loop
+//         hasMoreData = false;
+//       } else {
+//         // Update or create documents based on match_id
+//         for (const todo of todos) {
+//           await Live.findOneAndUpdate(
+//             { match_id: todo.match_id },
+//             todo,
+//             { upsert: true, maxTimeMS: 60000 } // Set a higher timeout (20 seconds)
+//           );
+
+//         }
+
+//         console.log(`Data fetched successfully fro.`);
+
+//         // Increment the page number for the next iteration
+//         currentPage++;
+//       }
+//     }
+
+//     console.log("Data saved in MongoDB.");
+//   } catch (error) {
+//     console.error("Error fetching and saving data:", error);
+//   }
+// };
 const fetchDataAndSave = async () => {
-  try {
-    let currentPage = 1;
-    let hasMoreData = true;
-
-    while (hasMoreData) {
-      // Fetch data from the external API for the specified date and page
-      console.log(`Fetching data from the external API for date ${tformattedDate} and page ${currentPage}...`);
-      const response = await axios.get(
-        `https://rest.entitysport.com/v2/matches?date=2023-09-30_2023-10-01&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
-      );
-      const todos = response.data.response.items;
-
-      if (todos.length === 0) {
-        // If no more data is returned, exit the loop
-        hasMoreData = false;
-      } else {
-        // Update or create documents based on match_id
-        for (const todo of todos) {
-          await Todo.findOneAndUpdate(
-            { match_id: todo.match_id },
-            todo,
-            { upsert: true, maxTimeMS: 60000 } // Set a higher timeout (20 seconds)
-          );
-
-        }
-
-        console.log(`Data fetched successfully fro.`);
-
-        // Increment the page number for the next iteration
-        currentPage++;
+    function getFormattedDate(date) {
+        return date.toISOString().split('T')[0];
       }
+    try {
+      // Calculate dates for fetching data
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 1); // Set to previous day
+  
+      const formattedStartDate = getFormattedDate(startDate);
+      const formattedEndDate = getFormattedDate(endDate);
+  
+      let currentPage = 1;
+      let hasMoreData = true;
+  
+      while (hasMoreData) {
+        console.log(`Fetching data for dates between ${formattedStartDate} and ${formattedEndDate}, page ${currentPage}...`);
+  
+        const response = await axios.get(
+          `https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+        //   `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-11-28&paged=${currentPage}&per_page=80`
+
+        );
+  
+        const matches = response.data.response.items;
+  
+        if (matches.length === 0) {
+          hasMoreData = false;
+        } else {
+          for (const match of matches) {
+            await Live.findOneAndUpdate(
+              { match_id: match.match_id },
+              match,
+              { upsert: true, maxTimeMS: 60000 }
+            );
+          }
+  
+          console.log(`Data fetched and updated for page ${currentPage}.`);
+          currentPage++;
+        }
+      }
+  
+      console.log("Data updated in MongoDB.");
+    } catch (error) {
+      console.error("Error fetching and updating data:", error);
     }
+  };
+  
+// setInterval(fetchDataAndSave, 10000);
 
-    console.log("Data saved in MongoDB.");
-  } catch (error) {
-    console.error("Error fetching and saving data:", error);
-  }
-};
-
-// fetchDataAndSave();
+fetchDataAndSave();
 
 
 // -----------------------------api to save match list ---------------------------------------------------

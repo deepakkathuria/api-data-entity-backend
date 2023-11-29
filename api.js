@@ -7,6 +7,7 @@ const teamController = require('./controllers/teamsController');
 const playerController = require('./controllers/playerController')
 const teamPlayerController = require('./controllers/teamPlayerController')
 const playerStatsController = require('./controllers/playerStatsController')
+const liveController = require('./controllers/liveController')
 require('dotenv').config();
 const cors = require('cors');
 
@@ -98,3 +99,23 @@ app.get("/matches", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+// -----------------------------------livescore api according to date --------------------------------
+
+app.get('/matches', liveController.getMatches);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
