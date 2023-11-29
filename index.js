@@ -167,8 +167,11 @@ const fetchDataAndSave = async () => {
         //   `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-11-28&paged=${currentPage}&per_page=80`
 
         );
+
+        // console.log(`https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`,'gthdsfuygsufgfuygryfkuergfkugiug')
   
         const matches = response.data.response.items;
+        console.log(matches[0],"fsajdffahdjfsadhfaskjfjsahsajkfdjsa")
   
         if (matches.length === 0) {
           hasMoreData = false;
@@ -192,9 +195,9 @@ const fetchDataAndSave = async () => {
     }
   };
   
-// setInterval(fetchDataAndSave, 10000);
+setInterval(fetchDataAndSave, 100000000000);
 
-fetchDataAndSave();
+// fetchDataAndSave();
 
 
 // -----------------------------api to save match list ---------------------------------------------------
