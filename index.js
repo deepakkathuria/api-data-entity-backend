@@ -164,13 +164,19 @@ const fetchDataAndSave = async () => {
   
         const response = await axios.get(
           `https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
-        //   `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-11-28&paged=${currentPage}&per_page=80`
+        //   `https://rest.entitysport.com/v2/matches?date=2023-11-28_2023-11-29&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af567`
 
         );
+        
 
         // console.log(`https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`,'gthdsfuygsufgfuygryfkuergfkugiug')
   
         const matches = response.data.response.items;
+        const m = matches.map((item)=>{
+            return item.match_id
+        })
+        console.log(m,"mdtaaa")
+
         console.log(matches[0],"fsajdffahdjfsadhfaskjfjsahsajkfdjsa")
   
         if (matches.length === 0) {
