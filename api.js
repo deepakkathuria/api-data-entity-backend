@@ -107,6 +107,7 @@ app.get('/match', liveController.getMatches);
 
 
 
+app.get('/matchfilter', liveController.getMatchesfilterwithstatus);
 
 
 

@@ -77,7 +77,7 @@ const Live = require('../models/live.model');
 // };
 
 
-
+// ---------------------------details------------------------------------------------------------------
 
 exports.getMatches = async (req, res) => {
   try {
@@ -100,6 +100,54 @@ exports.getMatches = async (req, res) => {
       } else {
         query.date_start = { $gte: parsedStartDate };
       }
+    }
+
+    // Pagination logic
+    const skipValue = (currentPage - 1) * (per_page ? parseInt(per_page) : Number.MAX_SAFE_INTEGER);
+    const options = {
+      skip: skipValue,
+      limit: per_page ? parseInt(per_page) : Number.MAX_SAFE_INTEGER
+    };
+
+    const matches = await Live.find(query, null, options);
+    console.log("Number of matches returned:", matches.length);
+
+    // Extract match IDs
+    const matchIds = matches.map(match => match.match_id);
+    console.log(matchIds, "matchids");
+
+    // Send match IDs in response
+    res.json({ matches });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+exports.getMatchesfilterwithstatus = async (req, res) => {
+  try {
+    const { date, currentPage = 1, per_page, status } = req.query;
+    const query = {};
+
+    // Date filtering
+    if (date) {
+      // existing date filtering logic...
+    }
+
+    // Status filtering
+    if (status) {
+      const statusArray = status.split(',').map(Number);
+      query.status = { $in: statusArray };
     }
 
     // Pagination logic
