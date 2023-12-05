@@ -201,7 +201,7 @@ const fetchDataAndSave = async () => {
     }
   };
   
-setInterval(fetchDataAndSave, 100000000000);
+setInterval(fetchDataAndSave, 10000);
 
 // fetchDataAndSave();
 
