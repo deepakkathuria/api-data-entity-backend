@@ -141,7 +141,21 @@ exports.getMatchesfilterwithstatus = async (req, res) => {
 
     // Date filtering
     if (date) {
-      // existing date filtering logic...
+      const [startDate, endDate] = date.split('_');
+      const parsedStartDate = new Date(startDate);
+      const parsedEndDate = endDate ? new Date(`${endDate}T23:59:59.999Z`) : null;
+
+      // Adjust the query to filter matches where the date range overlaps
+      // with the range between date_start and date_end
+      if (parsedEndDate) {
+        query.$or = [
+          { date_start: { $gte: parsedStartDate, $lte: parsedEndDate } },
+          { date_end: { $gte: parsedStartDate, $lte: parsedEndDate } },
+          { date_start: { $lte: parsedStartDate }, date_end: { $gte: parsedEndDate } }
+        ];
+      } else {
+        query.date_start = { $gte: parsedStartDate };
+      }
     }
 
     // Status filtering
