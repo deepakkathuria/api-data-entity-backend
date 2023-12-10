@@ -8,6 +8,8 @@ const playerController = require('./controllers/playerController')
 const teamPlayerController = require('./controllers/teamPlayerController')
 const playerStatsController = require('./controllers/playerStatsController')
 const liveController = require('./controllers/liveController')
+const liveinfomatchController = require('./controllers/liveinfomatchController')
+const competetionController = require('./controllers/competitionController')
 require('dotenv').config();
 const cors = require('cors');
 
@@ -112,11 +114,25 @@ app.get('/matchfilter', liveController.getMatchesfilterwithstatus);
 
 
 
+// --------------------------------livematch info live score ----------------------------------
+
+
+app.get('/getMatchbyid/:matchId',liveinfomatchController.getMatchById)
 
 
 
 
 
 
+
+// ---------------------------------------competetion api -----------------------------------------------
+
+
+// competition lis api 
+
+
+
+
+app.get('/competitions',competetionController.getCompetitions)
 
 

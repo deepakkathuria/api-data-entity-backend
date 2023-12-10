@@ -4,7 +4,10 @@ const axios = require("axios");
 const mongoose = require("mongoose");
 const express = require('express');
 const fs = require('fs');
-const Live = require('./models/live.model'); // Update the path according to your project structure
+const Live = require('./models/live.model');
+const Liveinfo = require('./models/liveinfo.model') // Update the path according to your project structure
+const Competition = require('./models/competition.model'); // Adjust the path according to your project structure
+
 
 
 const app = express();
@@ -202,6 +205,75 @@ const fetchDataAndSave = async () => {
   };
   
 setInterval(fetchDataAndSave, 10000);
+
+const fetchMatchDetailsAndSave = async (matchId) => {
+    try {
+        const matchDetailsResponse = await axios.get(`${API_URL}${matchId}/info?token=${API_TOKEN}`);
+        const matchDetails = matchDetailsResponse.data.response;
+
+        await Liveinfo.findOneAndUpdate(
+            { match_id: matchDetails.match_id },
+            matchDetails,
+            { upsert: true, new: true }
+        );
+    } catch (error) {
+        console.error(`Error fetching or saving details for match ID ${matchId}:`, error);
+    }
+};
+
+
+const API_URL = 'https://rest.entitysport.com/v2/matches/';
+const API_TOKEN = '73d62591af4b3ccb51986ff5f8af5676';
+
+// Function to get formatted date
+const getFormattedDate = (date) => {
+    return date.toISOString().split('T')[0];
+};
+
+
+
+
+// Main function to fetch all match IDs and their details
+const fetchDataAndSave1 = async () => {
+    try {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - 1); // Set to previous day
+
+        const formattedStartDate = getFormattedDate(startDate);
+        const formattedEndDate = getFormattedDate(endDate);
+        let currentPage = 1;
+        let hasMoreData = true;
+
+        while (hasMoreData) {
+            const matchesResponse = await axios.get(
+                // `${API_URL}?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=${API_TOKEN}`
+                // `${API_URL}?date=29-11-23_06-12-23&paged=${currentPage}&per_page=80&token=${API_TOKEN}`
+                `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-12-06&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+
+
+            );
+            const matches = matchesResponse.data.response.items;
+            if (matches.length === 0) {
+                hasMoreData = false;
+            } else {
+                for (const match of matches) {
+                    await fetchMatchDetailsAndSave(match.match_id);
+                }
+                currentPage++;
+            }
+        }
+
+        console.log("All available match data updated in MongoDB.");
+    } catch (error) {
+        console.error("Error fetching and updating data:", error);
+    }
+};
+
+// fetchDataAndSave1()
+
+// setInterval(fetchDataAndSave1);
+
 
 // fetchDataAndSave();
 
@@ -544,7 +616,7 @@ const competitionS = new mongoose.Schema({
   },
 });
 
-const Competition = mongoose.model('Competitiont', competitionS);
+// const Competition = mongoose.model('Competitiont', competitionS);
 
 
 
@@ -15256,6 +15328,47 @@ const fetchPlayers = async () => {
 
 
 
+// ===============================competition list api to save =-----------------------------------------------------
+
+
+
+const fetchAndSaveCompetitions = async () => {
+  let currentPage = 1;
+  const perPage = 10; // Adjust this based on the API's limit per page
+  let totalPages = null;
+
+  try {
+    while (totalPages === null || currentPage <= totalPages) {
+      console.log(`Fetching data for page ${currentPage}...`);
+
+      const response = await axios.get(
+        `https://rest.entitysport.com/v2/competitions?paged=${currentPage}&per_page=${perPage}&token=73d62591af4b3ccb51986ff5f8af5676`
+      );
+
+      const { items, total_pages } = response.data.response;
+      totalPages = total_pages;
+
+      for (const competition of items) {
+        await Competition.findOneAndUpdate(
+          { cid: competition.cid },
+          competition,
+          { upsert: true, new: true, maxTimeMS: 60000 }
+        );
+      }
+
+      console.log(`Data fetched and updated for page ${currentPage}.`);
+      currentPage++;
+    }
+
+    console.log("All competition data updated in MongoDB.");
+  } catch (error) {
+    console.error("Error fetching and updating data:", error);
+  }
+};
+
+// fetchAndSaveCompetitions();
+
+// ------------------------------------------------------competiton list ends ------------------------------------------------
 
 
 
@@ -15275,93 +15388,4 @@ const fetchPlayers = async () => {
 
 
 
-//fetch player for which the are player for teams
 
-// const getAllPlayersAndTheirTeams = async () => {
-//     try {
-//         const teams = await TeamM.find({});
-//         let playersData = [];
-
-//         teams.forEach(team => {
-//             // Iterate over each player category (e.g., t20i, test, odi)
-//             Object.keys(team.players).forEach(category => {
-//                 team.players[category].forEach(player => {
-//                     playersData.push({
-//                         playerId: player.pid, // Replace with actual field name if different
-//                         playerName: player.first_name + ' ' + player.last_name,
-//                         teamsPlayedFor: team.title, // Assuming the team title is the team they played for
-//                         // Add other player details as needed
-//                     });
-//                 });
-//             });
-//         });
-
-//         return playersData;
-//     } catch (error) {
-//         console.error("An error occurred:", error);
-//         return [];
-//     }
-// };
-
-// // Example usage
-// getAllPlayersAndTheirTeams().then(playersData => {
-//     console.log("Players and Their Teams:", playersData);
-// });
-  
-
-// Function to get all teams a player has played for
-// Function to get all teams a player has played for
-// const getPlayerTeams = async (playerId) => {
-//     try {
-//         const teams = await TeamM.find({});
-//         let playerTeams = [];
-
-//         teams.forEach(team => {
-//             // Iterate over each player category (e.g., t20i, test, odi)
-//             Object.keys(team.players).forEach(category => {
-//                 team.players[category].forEach(player => {
-//                     if (player.pid === playerId) {
-//                         playerTeams.push(team.title); // Assuming team title is the name of the team
-//                     }
-//                 });
-//             });
-//         });
-
-//         return playerTeams;
-//     } catch (error) {
-//         console.error("An error occurred:", error);
-//         return [];
-//     }
-// };
-
-// // Example usage
-// const playerId = 81; // Replace with the actual player ID (e.g., Washington Sundar's ID)
-// getPlayerTeams(playerId).then(teams => {
-//     console.log("Teams Played For:", teams);
-// });
-
-
-
-
-
-
-
-// const getAllTeamNamesAndWriteToCSV = async () => {
-//     try {
-//         const teams = await Team.find({}, { title: 1, _id: 0 });
-//         const teamNames = teams.map(team => team.title);
-
-//         // Convert array to CSV string
-//         const csvString = teamNames.join('\n');
-
-//         // Write to a CSV file
-//         fs.writeFileSync('teamNames.csv', csvString);
-
-//         console.log('Team names have been written to teamNames.csv');
-//     } catch (error) {
-//         console.error("An error occurred:", error);
-//     }
-// };
-
-// // Example usage
-// getAllTeamNamesAndWriteToCSV();
