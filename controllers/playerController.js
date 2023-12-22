@@ -49,22 +49,30 @@ exports.getPlayer = async (req, res) => {
 };
 
 
-
 exports.getallPlayer = async (req, res) => {
   try {
-    const { searchText } = req.query;
+    const { searchText, page = 1, limit = 100 } = req.query; // Default values for page and limit
     console.log(searchText, "searchText");
     let query = {};
 
     // Add search functionality
     if (searchText) {
-      // Assuming you want to search in a field like 'name'
-      // This will allow a case-insensitive partial match
       query.name = { $regex: searchText, $options: 'i' };
     }
 
-    const players = await Player.find(query);
-    res.json(players);
+    // Calculate the pagination
+    const skip = (page - 1) * limit; // Number of documents to skip
+
+    const players = await Player.find(query).skip(skip).limit(limit);
+    const total = await Player.countDocuments(query); // Get total count of documents
+
+    res.json({
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      limit,
+      data: players
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
