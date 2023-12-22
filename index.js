@@ -7,6 +7,7 @@ const fs = require('fs');
 const Live = require('./models/live.model');
 const Liveinfo = require('./models/liveinfo.model') // Update the path according to your project structure
 const Competition = require('./models/competition.model'); // Adjust the path according to your project structure
+const CompetitionStats = require('./models/competitionStats.model')
 
 
 
@@ -204,7 +205,7 @@ const fetchDataAndSave = async () => {
     }
   };
   
-setInterval(fetchDataAndSave, 10000);
+// setInterval(fetchDataAndSave, 10000);
 
 const fetchMatchDetailsAndSave = async (matchId) => {
     try {
@@ -15373,6 +15374,7 @@ const fetchAndSaveCompetitions = async () => {
 
 
 
+// -----------------------------competion stats -----------------------------------------------
 
 
 
@@ -15382,10 +15384,28 @@ const fetchAndSaveCompetitions = async () => {
 
 
 
-
-
-
-
-
-
-
+const fetchAndSaveCompetitionDetails = async () => {
+    try {
+      // Fetch the list of competitions
+      const competitionListResponse = await axios.get('https://api.sportzwiki.com/competitions');
+      const competitionList = competitionListResponse.data.competitions;
+  
+      for (const competition of competitionList) {
+        // Fetch detailed information for each competition
+        const competitionDetailResponse = await axios.get(`https://rest.entitysport.com/v2/competitions/${competition.cid}/stats/batting_most_runs?token=73d62591af4b3ccb51986ff5f8af5676`);
+        const competitionDetails = competitionDetailResponse.data.response;
+  
+        // Save or update competition details in the database
+        await CompetitionStats.findOneAndUpdate(
+            { cid: competition.cid },
+            { cid: competition.cid, ...competitionDetails },
+            { upsert: true, new: true, maxTimeMS: 60000 }
+        );
+      }
+  
+      console.log("Competition details updated in MongoDB.");
+    } catch (error) {
+      console.error("Error fetching and updating competition details:", error);
+    }
+  };
+  fetchAndSaveCompetitionDetails()

@@ -55,6 +55,7 @@ app.put('/teams/:id/content', teamController.addOrUpdateTeamContent);
 
 app.get('/players/:pid', playerController.getPlayerById);
 app.get('/players', playerController.getPlayer);
+app.get('/allplayers', playerController.getallPlayer);
 app.put('/players/:id/content', playerController.addOrUpdatePlayerContent);
 
 
@@ -134,5 +135,15 @@ app.get('/getMatchbyid/:matchId',liveinfomatchController.getMatchById)
 
 
 app.get('/competitions',competetionController.getCompetitions)
+
+
+app.get('/competitionstats/:cid',competetionController.getCompetitionStats)
+
+
+
+
+
+
+// ---------------------------------------- api for image player-----------------------------------------------------
 
 
