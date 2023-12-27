@@ -17,16 +17,6 @@ exports.getPlayerById = async (req, res) => {
 };
 
 
-// exports.getPlayer = async (req, res) => {
-//   try {
-//     const players = await Player.find();
-//     console.log(players, "players");
-//     res.json(players);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// };
 exports.getPlayer = async (req, res) => {
   try {
     const { searchText } = req.query;
@@ -145,5 +135,36 @@ exports.addOrUpdatePlayerContent = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+exports.addOrUpdatePlayerImage = async (req, res) => {
+  const { playerId } = req.params; // Extracting playerId from URL parameter
+
+  try {
+      const player = await Player.findOne({ pid: playerId });
+
+      if (!player) {
+          return res.status(404).send('Player not found');
+      }
+
+      // Update image URL if a new image is uploaded
+      if (req.file) {
+          player.image_url = req.file.path; // Assuming file storage path as image URL
+      } else {
+          return res.status(400).send('No image file provided');
+      }
+
+      await player.save(); // Save the updated player document
+
+      res.status(200).json({
+          message: 'Player image updated successfully',
+          player,
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
   }
 };

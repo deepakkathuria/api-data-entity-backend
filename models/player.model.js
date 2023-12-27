@@ -32,6 +32,7 @@ const playerSchema = new mongoose.Schema({
     thumb_url: { type: String, default: '' },
     nationality: { type: String, default: '' },
     player_content:{ type: String,required: true},
+    image_url: { type: String, default: '' }, // URL of the player's image
     teams: [teamSchema],// Array of team IDs
 
     

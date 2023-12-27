@@ -205,7 +205,7 @@ const fetchDataAndSave = async () => {
     }
   };
   
-// setInterval(fetchDataAndSave, 10000);
+setInterval(fetchDataAndSave, 10000);
 
 const fetchMatchDetailsAndSave = async (matchId) => {
     try {

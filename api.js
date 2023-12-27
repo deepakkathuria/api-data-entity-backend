@@ -12,6 +12,7 @@ const liveinfomatchController = require('./controllers/liveinfomatchController')
 const competetionController = require('./controllers/competitionController')
 require('dotenv').config();
 const cors = require('cors');
+const upload = require('./middleware/imageUpload');
 
 
 
@@ -57,6 +58,8 @@ app.get('/players/:pid', playerController.getPlayerById);
 app.get('/players', playerController.getPlayer);
 app.get('/allplayers', playerController.getallPlayer);
 app.put('/players/:id/content', playerController.addOrUpdatePlayerContent);
+app.post('/player/:playerId', upload.single('playerImage'),playerController.addOrUpdatePlayerImage)
+
 
 
 
