@@ -137,6 +137,7 @@ exports.getMatches = async (req, res) => {
 exports.getMatchesfilterwithstatus = async (req, res) => {
   try {
     const { date, currentPage = 1, per_page, status } = req.query;
+    console.log(status,"status")
     const query = {};
 
     // Date filtering

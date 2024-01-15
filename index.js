@@ -57,96 +57,12 @@ mongoose.connect(
 
 
 
-// const currentDate = new Date();
-
-// // Extract date components
-// const year = currentDate.getFullYear();
-// const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so we add 1 and pad with leading zero if needed
-// const day = String(currentDate.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
-
-// // Format the date
-// var formattedDate = `${year}-${month}-${day}`;
-
-
-
-
-
-
-
-// // Get the current date
-// const currentDatet = new Date();
-
-// // Get the date after two days
-// const twoDaysLater = new Date();
-// twoDaysLater.setDate(currentDatet.getDate() - 1);
-
-// // Extract date components
-// const tyear = twoDaysLater.getFullYear();
-// const tmonth = String(twoDaysLater.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so we add 1 and pad with leading zero if needed
-// const tday = String(twoDaysLater.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
-
-// // Format the date
-// var tformattedDate = `${tyear}-${tmonth}-${tday}`;
-// console.log(tformattedDate, "tformatrdate")
-// console.log(formattedDate, "formateeddate")
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
 // -------------------------------------------------------api to save match list -------------------------
 
-// const fetchDataAndSave = async () => {
-//   try {
-//     let currentPage = 1;
-//     let hasMoreData = true;
-
-//     while (hasMoreData) {
-//       // Fetch data from the external API for the specified date and page
-//       console.log(`Fetching data from the external API for date ${tformattedDate} and page ${currentPage}...`);
-//       const response = await axios.get(
-//         `https://rest.entitysport.com/v2/matches?date=2023-11-24_2023-12-27&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
-//       );
-//       const todos = response.data.response.items;
-
-//       if (todos.length === 0) {
-//         // If no more data is returned, exit the loop
-//         hasMoreData = false;
-//       } else {
-//         // Update or create documents based on match_id
-//         for (const todo of todos) {
-//           await Live.findOneAndUpdate(
-//             { match_id: todo.match_id },
-//             todo,
-//             { upsert: true, maxTimeMS: 60000 } // Set a higher timeout (20 seconds)
-//           );
-
-//         }
-
-//         console.log(`Data fetched successfully fro.`);
-
-//         // Increment the page number for the next iteration
-//         currentPage++;
-//       }
-//     }
-
-//     console.log("Data saved in MongoDB.");
-//   } catch (error) {
-//     console.error("Error fetching and saving data:", error);
-//   }
-// };
 const fetchDataAndSave = async () => {
     function getFormattedDate(date) {
         return date.toISOString().split('T')[0];
@@ -176,10 +92,13 @@ const fetchDataAndSave = async () => {
         // console.log(`https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`,'gthdsfuygsufgfuygryfkuergfkugiug')
   
         const matches = response.data.response.items;
-        const m = matches.map((item)=>{
-            return item.match_id
-        })
-        console.log(m,"mdtaaa")
+
+        console.log(matches,"matchesdata")
+        const m = matches.map((item) => {
+            return { match_id: item.match_id, status_str: item.status_str };
+        });
+        
+        console.log(matches,matches.length,"mdtaaa")
 
         console.log(matches[0],"fsajdffahdjfsadhfaskjfjsahsajkfdjsa")
   
@@ -276,7 +195,6 @@ const fetchDataAndSave1 = async () => {
 // setInterval(fetchDataAndSave1);
 
 
-// fetchDataAndSave();
 
 
 // -----------------------------api to save match list ---------------------------------------------------
@@ -15409,3 +15327,116 @@ const fetchAndSaveCompetitionDetails = async () => {
     }
   };
   fetchAndSaveCompetitionDetails()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ////test//
+  
+const fetchDataAndSaveT = async () => {
+    function getFormattedDate(date) {
+        return date.toISOString().split('T')[0];
+      }
+    try {
+      // Calculate dates for fetching data
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 1); // Set to previous day
+  
+      const formattedStartDate = getFormattedDate(startDate);
+      const formattedEndDate = getFormattedDate(endDate);
+  
+      let currentPage = 1;
+      let hasMoreData = true;
+  
+      while (hasMoreData) {
+        console.log(`Fetching data for dates between ${formattedStartDate} and ${formattedEndDate}, page ${currentPage}...`);
+  
+        const response = await axios.get(
+        //   `https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+          `https://rest.entitysport.com/v2/matches?date=2023-11-10_2023-12-28&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+
+        );
+        
+
+        // console.log(`https://rest.entitysport.com/v2/matches?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`,'gthdsfuygsufgfuygryfkuergfkugiug')
+  
+        const matches = response.data.response.items;
+
+        console.log(matches,"matchesdata")
+        const m = matches.map((item) => {
+            return { match_id: item.match_id, status_str: item.status_str };
+        });
+        
+        console.log(matches,matches.length,"mdtaaa")
+
+        console.log(matches[0],"fsajdffahdjfsadhfaskjfjsahsajkfdjsa")
+  
+        if (matches.length === 0) {
+          hasMoreData = false;
+        } else {
+          for (const match of matches) {
+            await Live.findOneAndUpdate(
+              { match_id: match.match_id },
+              match,
+              { upsert: true, maxTimeMS: 60000 }
+            );
+          }
+  
+          console.log(`Data fetched and updated for page ${currentPage}.`);
+          currentPage++;
+        }
+      }
+  
+      console.log("Data updated in MongoDB.");
+    } catch (error) {
+      console.error("Error fetching and updating data:", error);
+    }
+  };
+  
+// setInterval(fetchDataAndSaveT, 10000);
+fetchDataAndSaveT()
