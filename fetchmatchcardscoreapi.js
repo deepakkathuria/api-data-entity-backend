@@ -92,6 +92,9 @@ const getFormattedDate = (date) => {
 // Main function to fetch all match IDs and their scorecards
 const fetchDataAndSaveScorecards = async () => {
     try {
+
+        let totalMatches = 0;
+        let processedMatches = 0;
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 1); // Set to the previous day
@@ -104,15 +107,26 @@ const fetchDataAndSaveScorecards = async () => {
         while (hasMoreData) {
             const matchesResponse = await axios.get(
                 // `${API_URL}?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=${API_TOKEN}`
-                `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-12-06&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+                // `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-12-06&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
+                `https://api.sportzwiki.com/match`
 
             );
-            const matches = matchesResponse.data.response.items;
+            const matches = matchesResponse.data.matches;
+            console.log(matches)
             if (matches.length === 0) {
                 hasMoreData = false;
             } else {
                 for (const match of matches) {
                     await fetchMatchScorecardAndSave(match.match_id);
+                    processedMatches++;
+                    // const currentTime = new Date();
+                    // const elapsed = (currentTime - startTime) / 1000; // seconds
+                    // const avgTimePerMatch = elapsed / processedMatches;
+                    // const estimatedTotalTime = avgTimePerMatch * totalMatches;
+                    // const remainingTime = estimatedTotalTime - elapsed;
+
+                    console.log(`Processed ${processedMatches}`);
+
                 }
                 currentPage++;
             }

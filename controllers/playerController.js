@@ -144,7 +144,7 @@ exports.addOrUpdatePlayerImage = async (req, res) => {
   const { playerId } = req.params; // Extracting playerId from URL parameter
 
   try {
-      const player = await Player.findOne({ pid: playerId });
+      const player = await Player.w({ pid: playerId });
 
       if (!player) {
           return res.status(404).send('Player not found');
