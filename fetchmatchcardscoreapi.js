@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const express = require('express');
 const axios = require('axios')
 const fs = require('fs');
+const moment = require("moment");
+
 const Live = require('./models/live.model');
 const Liveinfo = require('./models/liveinfo.model') // Update the path according to your project structure
 const Competition = require('./models/competition.model'); // Adjust the path according to your project structure
@@ -57,32 +59,30 @@ const CricketMatchScorecard = require('./models/livescorecard.model'); // Update
 
 const API_URL = 'https://rest.entitysport.com/v2/matches/';
 const API_TOKEN = '73d62591af4b3ccb51986ff5f8af5676';
+let isDataFetchedForDate = false; 
 
 // Function to fetch match scorecard and save to MongoDB
 const fetchMatchScorecardAndSave = async (matchId) => {
-  try {
-      const scorecardResponse = await axios.get(`${API_URL}${matchId}/scorecard?token=${API_TOKEN}`);
+    try {
+        const scorecardResponse = await axios.get(`${API_URL}${matchId}/scorecard?token=${API_TOKEN}`);
+        let matchScorecard = scorecardResponse.data.response;
 
-      let matchScorecard = scorecardResponse.data.response;
-      // console.log(matchScorecard,"fsjafhkadghkasgkdgaskdgkshagdkagkjdsgkjagjkdsgkjas")
-      // Check if 'man_of_the_match' is an empty string and set it to null
-      if (matchScorecard.man_of_the_match === '') {
-          matchScorecard.man_of_the_match = null;
-      }
-      if (matchScorecard.man_of_the_series === '') {
-        matchScorecard.man_of_the_series = null; // or {} based on what's appropriate
-      }
+        if (matchScorecard.man_of_the_match === '') {
+            matchScorecard.man_of_the_match = null;
+        }
+        if (matchScorecard.man_of_the_series === '') {
+            matchScorecard.man_of_the_series = null; // or {} based on what's appropriate
+        }
 
-      await CricketMatchScorecard.findOneAndUpdate(
-          { match_id: matchScorecard.match_id },
-          matchScorecard,
-          { upsert: true, new: true }
-      );
-  } catch (error) {
-      console.error(`Error fetching or saving scorecard for match ID ${matchId}:`, error);
-  }
+        await CricketMatchScorecard.findOneAndUpdate(
+            { match_id: matchScorecard.match_id },
+            matchScorecard,
+            { upsert: true, new: true }
+        );
+    } catch (error) {
+        console.error(`Error fetching or saving scorecard for match ID ${matchId}:`, error);
+    }
 };
-
 
 // Function to get formatted date
 const getFormattedDate = (date) => {
@@ -91,52 +91,47 @@ const getFormattedDate = (date) => {
 
 // Main function to fetch all match IDs and their scorecards
 const fetchDataAndSaveScorecards = async () => {
-    try {
+    if (isDataFetchedForDate) {
+        console.log("Data already fetched for this date.");
+        return;
+    }
 
-        let totalMatches = 0;
+    try {
         let processedMatches = 0;
+        const totalMatches = 85; // Total number of matches for the date
+
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 1); // Set to the previous day
+        const startDate1 = moment(startDate).format("YYYY-MM-DD");
+        const endDate1 = moment(endDate).format("YYYY-MM-DD");
 
-        const formattedStartDate = getFormattedDate(startDate);
-        const formattedEndDate = getFormattedDate(endDate);
         let currentPage = 1;
         let hasMoreData = true;
 
-        while (hasMoreData) {
-            const matchesResponse = await axios.get(
-                // `${API_URL}?date=${formattedStartDate}_${formattedEndDate}&paged=${currentPage}&per_page=80&token=${API_TOKEN}`
-                // `https://rest.entitysport.com/v2/matches?date=2023-11-27_2023-12-06&paged=${currentPage}&per_page=80&token=73d62591af4b3ccb51986ff5f8af5676`
-                `https://api.sportzwiki.com/match`
-
-            );
+        while (hasMoreData && processedMatches < totalMatches) {
+            const matchesResponse = await axios.get(`https://api.sportzwiki.com/matchfilter?page=${currentPage}&date=${startDate1}_${endDate1}`);
             const matches = matchesResponse.data.matches;
-            console.log(matches)
+
             if (matches.length === 0) {
                 hasMoreData = false;
             } else {
                 for (const match of matches) {
                     await fetchMatchScorecardAndSave(match.match_id);
                     processedMatches++;
-                    // const currentTime = new Date();
-                    // const elapsed = (currentTime - startTime) / 1000; // seconds
-                    // const avgTimePerMatch = elapsed / processedMatches;
-                    // const estimatedTotalTime = avgTimePerMatch * totalMatches;
-                    // const remainingTime = estimatedTotalTime - elapsed;
-
                     console.log(`Processed ${processedMatches}`);
-
                 }
                 currentPage++;
             }
         }
 
-        console.log("All available match scorecard data updated in MongoDB.");
+        if (processedMatches >= totalMatches) {
+            isDataFetchedForDate = true; // Set flag to true after processing all matches
+            console.log("All available match scorecard data updated in MongoDB.");
+        }
     } catch (error) {
         console.error("Error fetching and updating scorecard data:", error);
     }
 };
 
-// Run the main function
-fetchDataAndSaveScorecards();
+fetchDataAndSaveScorecards()

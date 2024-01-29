@@ -11,7 +11,7 @@ const fetchData = async (page = 1, totalPages = Infinity) => {
 
     try {
         console.log(`Fetching data for page ${page}/${totalPages}...`);
-        const response = await axios.get(`${baseUrl}?country=en&token=${apiToken}&paged=${page}`);
+        const response = await axios.get(`${baseUrl}?country=ae&token=${apiToken}&paged=${page}`);
         const data = response.data;
 
         if (data && data.response && data.response.items) {

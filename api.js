@@ -10,6 +10,7 @@ const playerStatsController = require('./controllers/playerStatsController')
 const liveController = require('./controllers/liveController')
 const liveinfomatchController = require('./controllers/liveinfomatchController')
 const competetionController = require('./controllers/competitionController')
+const livescorecardController = require('./controllers/livescorecardController')
 require('dotenv').config();
 const cors = require('cors');
 const upload = require('./middleware/imageUpload');
@@ -150,3 +151,11 @@ app.get('/competitionstats/:cid',competetionController.getCompetitionStats)
 // ---------------------------------------- api for image player-----------------------------------------------------
 
 
+
+
+
+// -----------------------------------------------api for livescorecard--------------------------------------------------
+
+
+
+app.get('/getMatchScorebyid/:matchId',livescorecardController.getMatchScoreId)
