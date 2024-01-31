@@ -93,14 +93,11 @@ const fetchDataAndSave = async () => {
   
         const matches = response.data.response.items;
 
-        console.log(matches,"matchesdata")
         const m = matches.map((item) => {
             return { match_id: item.match_id, status_str: item.status_str };
         });
         
-        console.log(matches,matches.length,"mdtaaa")
 
-        console.log(matches[0],"fsajdffahdjfsadhfaskjfjsahsajkfdjsa")
   
         if (matches.length === 0) {
           hasMoreData = false;
@@ -181,15 +178,12 @@ const fetchMatchDetailsAndSave = async (matchId) => {
         `https://api.sportzwiki.com/matchfilter?page=${currentPage}&date=${startDate1}_${endDate1}`
       );
       const matches = matchesResponse.data.matches;
-      console.log(matches.length, "matcheslength");
   
       for (const match of matches) {
         await fetchMatchDetailsAndSave(match.match_id);
         totalMatchesProcessed++;
-        console.log(`Total matches processed: ${totalMatchesProcessed}`);
       }
   
-      console.log("All available match data updated in MongoDB.");
     } catch (error) {
       console.error("Error fetching and updating data:", error);
     }
