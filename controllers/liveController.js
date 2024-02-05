@@ -114,7 +114,6 @@ exports.getMatches = async (req, res) => {
 
     // Extract match IDs
     const matchIds = matches.map(match => match.match_id);
-    console.log(matchIds, "matchids");
 
     // Send match IDs in response
     res.json({ matches });
@@ -177,7 +176,6 @@ exports.getMatchesfilterwithstatus = async (req, res) => {
 
     // Extract match IDs
     const matchIds = matches.map(match => match.match_id);
-    console.log(matchIds, "matchids");
 
     // Send match IDs in response
     res.json({ matches });
