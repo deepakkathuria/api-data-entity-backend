@@ -190,8 +190,8 @@ const fetchMatchDetailsAndSave = async (matchId) => {
   };
   
 
-   fetchDataAndSave1();
-  setInterval(fetchDataAndSave1, 1800000); 
+//    fetchDataAndSave1();
+//   setInterval(fetchDataAndSave1, 1800000); 
 
 // ----------------------------------------------------------INFO------------------------------------------------------------------
 
