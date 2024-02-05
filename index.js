@@ -189,9 +189,8 @@ const fetchMatchDetailsAndSave = async (matchId) => {
     }
   };
   
-//   fetchDataAndSave1();
-//   setInterval(fetchDataAndSave1, 1800000); // 1800000 milliseconds = 30 minutes
-
+   fetchDataAndSave1();
+  setInterval(fetchDataAndSave1, 1800000); 
 // ----------------------------------------------------------INFO------------------------------------------------------------------
 
 
