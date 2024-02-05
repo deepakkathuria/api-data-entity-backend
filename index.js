@@ -145,7 +145,7 @@ const fetchMatchDetailsAndSave = async (matchId) => {
         { upsert: true, new: true }
       );
   
-      console.log(`Match details updated for match ID: ${matchId}`);
+    //   console.log(`Match details updated for match ID: ${matchId}`);
     } catch (error) {
       console.error(
         `Error fetching or saving details for match ID ${matchId}:`,
@@ -189,8 +189,10 @@ const fetchMatchDetailsAndSave = async (matchId) => {
     }
   };
   
+
    fetchDataAndSave1();
   setInterval(fetchDataAndSave1, 1800000); 
+
 // ----------------------------------------------------------INFO------------------------------------------------------------------
 
 
@@ -306,7 +308,6 @@ const fetchTeamsAndSave = async () => {
     const totalCount = await Team.countDocuments();
     console.log(`Total number of documents in the collection: ${totalCount}`);
 
-    console.log("Teams data saved in MongoDB.");
   } catch (error) {
     console.error("Error fetching and saving teams data:", error.response ? error.response.data : error.message);
     console.log("Error details:", error);
