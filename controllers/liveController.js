@@ -172,7 +172,7 @@ exports.getMatchesfilterwithstatus = async (req, res) => {
     };
 
     const matches = await Live.find(query, null, options);
-    console.log("Number of matches returned:", matches.length);
+    // console.log("Number of matches returned:", matches.length);
 
     // Extract match IDs
     const matchIds = matches.map(match => match.match_id);
