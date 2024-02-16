@@ -110,7 +110,7 @@ const fetchDataAndSaveScorecards = async () => {
         let hasMoreData = true;
 
         while (hasMoreData && processedMatches < totalMatches) {
-            const matchesResponse = await axios.get(`https://api.sportzwiki.com/matchfilter?page=${currentPage}&date=${startDate1}_${endDate1}`);
+            const matchesResponse = await axios.get(`https://api.sportzwiki.com/matchfilter`);
             const matches = matchesResponse.data.matches;
 
             if (matches.length === 0) {

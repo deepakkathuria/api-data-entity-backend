@@ -26,7 +26,7 @@ exports.getMatchById = async (req, res) => {
         console.log(matchData.date_start_ist, "Converted Local Time");
 
         // Send the modified match data in response
-        res.json({ match: matchData });
+        res.json({ response: matchData });
     } catch (error) {
         console.error('Error fetching match data:', error);
         res.status(500).json({ error: 'Internal Server Error' });
