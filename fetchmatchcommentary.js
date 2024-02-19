@@ -23,6 +23,7 @@ const API_TOKEN = "73d62591af4b3ccb51986ff5f8af5676"; // Use your actual API tok
 const fetchInningsDetails = async (matchId) => {
   try {
     const scorecardResponse = await axios.get(`${SCORECARD_API_URL}${matchId}`);
+    console.log(scorecardResponse.data,"response")
     const innings = scorecardResponse.data.innings; // Assuming this is how the API response is structured
     return innings;
   } catch (error) {
@@ -63,6 +64,10 @@ const fetchDataAndSave = async () => {
 
     for (const match of matches) {
       const innings = await fetchInningsDetails(match.match_id);
+      if (!Array.isArray(innings)) {
+        console.error(`Expected 'innings' to be an array but received type '${typeof innings}' for match ID: ${match.match_id}`);
+        continue; // Skip this match and continue with the next one
+      }
       for (const inning of innings) {
         await fetchMatchCommentaryAndSave(match.match_id, inning.number); // Assuming `inning.number` is available and correct
       }
@@ -73,6 +78,7 @@ const fetchDataAndSave = async () => {
     console.error("Error fetching and updating data:", error);
   }
 };
+
 
 fetchDataAndSave();
 // Optionally, set an interval to run this function periodically
